@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  motion,
+  AnimatePresence,
+} from "motion/react";
+
 import {
   ArrowRight,
   Check,
@@ -13,7 +22,6 @@ import {
   ShoppingBag,
   Sparkles,
   Truck,
-  User,
   X,
   Zap,
   Gift,
@@ -24,15 +32,27 @@ import {
   Dumbbell,
   Home as HomeIcon,
   Palette,
+  type LucideIcon,
 } from "lucide-react";
 
 import Link from "next/link";
-import { products, type Product } from "../lib/products";
+
+import {
+  products,
+  type Product,
+} from "../lib/products";
+
 import { useCart } from "./CartProvider";
 
-type CategoryIcon = typeof Shirt;
+import AccountMenu from "./AccountMenu";
 
-const categories: Array<[string, CategoryIcon]> = [
+/* =====================================================
+   CATEGORIES
+===================================================== */
+
+const categories: Array<
+  [string, LucideIcon]
+> = [
   ["Fashion", Shirt],
   ["Footwear", Footprints],
   ["Electronics", Zap],
@@ -44,29 +64,61 @@ const categories: Array<[string, CategoryIcon]> = [
   ["Gifts", Gift],
 ];
 
+/* =====================================================
+   HOME PAGE
+===================================================== */
+
 export default function SmartBuyHome() {
-  const { itemCount, addToCart } = useCart();
+  const {
+    itemCount,
+    addToCart,
+  } = useCart();
 
-  const [likes, setLikes] = useState<number[]>([]);
-  const [ai, setAi] = useState(true);
-  const [search, setSearch] = useState(false);
-  const [query, setQuery] = useState("");
-  const [budget, setBudget] = useState("5000");
-  const [style, setStyle] = useState("Casual");
-  const [stage, setStage] = useState(0);
-  const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
+  const [likes, setLikes] =
+    useState<number[]>([]);
 
-  // Mouse movement + keyboard shortcuts
+  const [ai, setAi] =
+    useState(true);
+
+  const [search, setSearch] =
+    useState(false);
+
+  const [query, setQuery] =
+    useState("");
+
+  const [budget, setBudget] =
+    useState("5000");
+
+  const [style, setStyle] =
+    useState("Casual");
+
+  const [stage, setStage] =
+    useState(0);
+
+  const [mouseX, setMouseX] =
+    useState(0);
+
+  const [mouseY, setMouseY] =
+    useState(0);
+
+  /* =================================================
+     MOUSE + KEYBOARD
+  ================================================= */
+
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
+    const handleMouseMove = (
+      event: MouseEvent
+    ) => {
       setMouseX(event.clientX);
       setMouseY(event.clientY);
     };
 
-    const handleKeyboard = (event: KeyboardEvent) => {
+    const handleKeyboard = (
+      event: KeyboardEvent
+    ) => {
       if (
-        (event.ctrlKey || event.metaKey) &&
+        (event.ctrlKey ||
+          event.metaKey) &&
         event.key.toLowerCase() === "k"
       ) {
         event.preventDefault();
@@ -78,65 +130,111 @@ export default function SmartBuyHome() {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("keydown", handleKeyboard);
+    window.addEventListener(
+      "mousemove",
+      handleMouseMove
+    );
+
+    window.addEventListener(
+      "keydown",
+      handleKeyboard
+    );
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("keydown", handleKeyboard);
+      window.removeEventListener(
+        "mousemove",
+        handleMouseMove
+      );
+
+      window.removeEventListener(
+        "keydown",
+        handleKeyboard
+      );
     };
   }, []);
 
-  // Search
-  const filteredProducts = useMemo(() => {
-    const value = query.trim().toLowerCase();
+  /* =================================================
+     SEARCH
+  ================================================= */
 
-    if (!value) {
-      return products;
-    }
+  const filteredProducts =
+    useMemo(() => {
+      const value =
+        query.trim().toLowerCase();
 
-    return products.filter((product) =>
-      `${product.name} ${product.cat}`
-        .toLowerCase()
-        .includes(value)
-    );
-  }, [query]);
+      if (!value) {
+        return products;
+      }
 
-  // Cart
-  const addProduct = (id: number = products[0].id) => {
+      return products.filter(
+        (product) =>
+          `${product.name} ${product.cat}`
+            .toLowerCase()
+            .includes(value)
+      );
+    }, [query]);
+
+  /* =================================================
+     CART
+  ================================================= */
+
+  const addProduct = (
+    id: number = products[0].id
+  ) => {
     addToCart(id);
   };
 
-  // Wishlist
-  const toggleLike = (id: number) => {
+  /* =================================================
+     WISHLIST
+  ================================================= */
+
+  const toggleLike = (
+    id: number
+  ) => {
     setLikes((current) =>
       current.includes(id)
-        ? current.filter((item) => item !== id)
+        ? current.filter(
+            (item) => item !== id
+          )
         : [...current, id]
     );
   };
 
-  // AI animation
-  const generateCollection = () => {
-    setStage(1);
+  /* =================================================
+     AI GENERATOR
+  ================================================= */
 
-    setTimeout(() => {
-      setStage(2);
-    }, 700);
+  const generateCollection =
+    () => {
+      setStage(1);
 
-    setTimeout(() => {
-      setStage(3);
-    }, 1400);
+      setTimeout(
+        () => setStage(2),
+        700
+      );
 
-    setTimeout(() => {
-      setStage(4);
-    }, 2100);
-  };
+      setTimeout(
+        () => setStage(3),
+        1400
+      );
+
+      setTimeout(
+        () => setStage(4),
+        2100
+      );
+    };
+
+  /* =================================================
+     PARALLAX
+  ================================================= */
 
   const moveX =
     (mouseX /
       Math.max(
-        typeof window !== "undefined" ? window.innerWidth : 1,
+        typeof window !==
+          "undefined"
+          ? window.innerWidth
+          : 1,
         1
       ) -
       0.5) *
@@ -145,7 +243,10 @@ export default function SmartBuyHome() {
   const moveY =
     (mouseY /
       Math.max(
-        typeof window !== "undefined" ? window.innerHeight : 1,
+        typeof window !==
+          "undefined"
+          ? window.innerHeight
+          : 1,
         1
       ) -
       0.5) *
@@ -153,22 +254,32 @@ export default function SmartBuyHome() {
 
   return (
     <main className="app">
-      {/* Mouse spotlight */}
+
+      {/* =================================================
+          BACKGROUND
+      ================================================= */}
+
       <div
         className="spotlight"
         style={{
-          transform: `translate3d(${mouseX - 250}px, ${
-            mouseY - 250
-          }px, 0)`,
+          transform:
+            `translate3d(` +
+            `${mouseX - 250}px,` +
+            `${mouseY - 250}px,0)`,
         }}
       />
 
       <div className="noise" />
 
-      {/* ================= HEADER ================= */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <header className="header">
         <div className="nav-wrap">
-          {/* Brand */}
+
+          {/* BRAND */}
+
           <button
             className="brand"
             type="button"
@@ -179,85 +290,137 @@ export default function SmartBuyHome() {
               })
             }
           >
-            <span className="brand-mark">S</span>
+            <span className="brand-mark">
+              S
+            </span>
+
             <b>SmartBuy</b>
           </button>
 
-          {/* Navigation */}
+          {/* NAVIGATION */}
+
           <nav>
-            <a className="active" href="#top">
+            <a
+              className="active"
+              href="#top"
+            >
               Home
             </a>
 
-            <Link href="/products">Products</Link>
+            <Link href="/products">
+              Products
+            </Link>
 
-            <a href="#categories">Categories</a>
+            <a href="#categories">
+              Categories
+            </a>
 
-            <a href="#deals">Deals</a>
+            <a href="#deals">
+              Deals
+            </a>
 
             <button
               className="smart-pill"
               type="button"
-              onClick={() => setAi(true)}
+              onClick={() =>
+                setAi(true)
+              }
             >
               <Sparkles size={14} />
+
               SmartBuy
+
               <span>AI</span>
             </button>
           </nav>
 
-          {/* Search */}
+          {/* SEARCH */}
+
           <button
             className="searchbar"
             type="button"
-            onClick={() => setSearch(true)}
+            onClick={() =>
+              setSearch(true)
+            }
           >
             <Search size={18} />
 
             <span>
-              Search for products, brands or ask AI...
+              Search for products,
+              brands or ask AI...
             </span>
 
             <kbd>Ctrl K</kbd>
           </button>
 
-          {/* Actions */}
+          {/* ACTIONS */}
+
           <div className="actions">
-            <button type="button">
+
+            {/* Wishlist */}
+            <button
+              type="button"
+              aria-label="Wishlist"
+              onClick={() =>
+                document
+                  .getElementById(
+                    "trending"
+                  )
+                  ?.scrollIntoView({
+                    behavior:
+                      "smooth",
+                  })
+              }
+            >
               <Heart size={19} />
             </button>
 
-            <Link href="/cart" className="cart">
-              <ShoppingBag size={19} />
+            {/* Cart */}
+            <Link
+              href="/cart"
+              className="cart"
+              aria-label="Shopping cart"
+            >
+              <ShoppingBag
+                size={19}
+              />
+
               <i>{itemCount}</i>
             </Link>
 
-            {/* USER ACCOUNT */}
-            <Link
-              href="/account"
-              className="avatar"
-              aria-label="My Account"
-            >
-              <User size={17} />
-            </Link>
+            {/* Account */}
+            <AccountMenu />
 
+            {/* Mobile menu */}
             <button
               className="mobile-menu"
               type="button"
+              aria-label="Menu"
             >
               <Menu size={20} />
             </button>
+
           </div>
         </div>
       </header>
 
-      {/* ================= HERO ================= */}
-      <section id="top" className="hero">
+      {/* =================================================
+          HERO
+      ================================================= */}
+
+      <section
+        id="top"
+        className="hero"
+      >
         <div className="hero-grid">
-          {/* Hero Text */}
+
+          {/* HERO COPY */}
+
           <div className="hero-copy">
+
             <span className="kicker">
               <Sparkles size={13} />
+
               AI POWERED SHOPPING
             </span>
 
@@ -273,55 +436,77 @@ export default function SmartBuyHome() {
             >
               Shop Smarter
               <br />
-              Live <em>Better</em>
+              Live{" "}
+              <em>Better</em>
             </motion.h1>
 
             <p>
-              AI-powered recommendations, trending products,
-              and a whole new shopping experience built around
-              you.
+              AI-powered recommendations,
+              trending products, and a
+              whole new shopping experience
+              built around you.
             </p>
 
             <div className="hero-buttons">
+
               <Link
                 href="/products"
                 className="primary"
               >
                 Explore Products
+
                 <ArrowRight size={17} />
               </Link>
 
               <button
                 className="secondary"
                 type="button"
-                onClick={() => setAi(true)}
+                onClick={() =>
+                  setAi(true)
+                }
               >
                 <span>▶</span>
+
                 Ask SmartBuy
               </button>
+
             </div>
 
-            {/* Trust */}
+            {/* TRUST */}
+
             <div className="trust-row">
+
               <div>
                 <span>
                   <Truck size={15} />
                 </span>
 
                 <div>
-                  <b>Free Delivery</b>
-                  <small>Orders above ₹499</small>
+                  <b>
+                    Free Delivery
+                  </b>
+
+                  <small>
+                    Orders above ₹499
+                  </small>
                 </div>
               </div>
 
               <div>
                 <span>
-                  <CircleDollarSign size={15} />
+                  <CircleDollarSign
+                    size={15}
+                  />
                 </span>
 
                 <div>
-                  <b>Easy Returns</b>
-                  <small>7 day return policy</small>
+                  <b>
+                    Easy Returns
+                  </b>
+
+                  <small>
+                    7 day return policy
+                  </small>
                 </div>
               </div>
 
@@ -331,22 +516,33 @@ export default function SmartBuyHome() {
                 </span>
 
                 <div>
-                  <b>Secure Payments</b>
-                  <small>100% safe & secure</small>
+                  <b>
+                    Secure Payments
+                  </b>
+
+                  <small>
+                    100% safe & secure
+                  </small>
                 </div>
               </div>
+
             </div>
           </div>
 
-          {/* Hero Product */}
+          {/* HERO STAGE */}
+
           <div className="hero-stage">
+
             <div className="orbit a" />
             <div className="orbit b" />
 
             <motion.img
               className="hero-shoe"
               src={products[0]?.img}
-              alt={products[0]?.name ?? "SmartBuy product"}
+              alt={
+                products[0]?.name ??
+                "SmartBuy product"
+              }
               style={{
                 x: moveX,
                 y: moveY,
@@ -374,7 +570,9 @@ export default function SmartBuyHome() {
               title="Smart Watch"
               price="₹2,499"
               button
-              onAdd={() => addProduct(2)}
+              onAdd={() =>
+                addProduct(2)
+              }
             />
 
             <FloatCard
@@ -382,50 +580,71 @@ export default function SmartBuyHome() {
               title="Noise Headphones"
               price="₹1,999"
               button
-              onAdd={() => addProduct(7)}
+              onAdd={() =>
+                addProduct(7)
+              }
             />
 
             <span className="hero-chip">
               <i />
               360° product view
             </span>
+
           </div>
 
-          {/* ================= AI PANEL ================= */}
+          {/* =================================================
+              AI PANEL
+          ================================================= */}
+
           {ai && (
             <aside className="ai-panel">
+
               <div className="ai-head">
+
                 <div className="ai-title">
+
                   <span className="ai-orb">
                     <Sparkles size={15} />
                   </span>
 
                   <div>
-                    <b>SmartBuy AI</b>
+                    <b>
+                      SmartBuy AI
+                    </b>
+
                     <small>
-                      Beta • Your shopping co-pilot
+                      Beta • Your shopping
+                      co-pilot
                     </small>
                   </div>
+
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => setAi(false)}
+                  onClick={() =>
+                    setAi(false)
+                  }
+                  aria-label="Close AI"
                 >
                   <X size={17} />
                 </button>
+
               </div>
 
               <h3>
                 Tell us what you need.
                 <br />
+
                 <span>
-                  We'll build the perfect cart for you.
+                  We'll build the perfect
+                  cart for you.
                 </span>{" "}
                 ✨
               </h3>
 
               <div className="fields">
+
                 {/* Search */}
                 <label>
                   <span>⌕</span>
@@ -434,7 +653,9 @@ export default function SmartBuyHome() {
                     placeholder="What are you looking for?"
                     value={query}
                     onChange={(event) =>
-                      setQuery(event.target.value)
+                      setQuery(
+                        event.target.value
+                      )
                     }
                   />
                 </label>
@@ -446,12 +667,16 @@ export default function SmartBuyHome() {
                   <input
                     value={budget}
                     onChange={(event) =>
-                      setBudget(event.target.value)
+                      setBudget(
+                        event.target.value
+                      )
                     }
                     placeholder="Budget"
                   />
 
-                  <small>Budget</small>
+                  <small>
+                    Budget
+                  </small>
                 </label>
 
                 {/* Purpose */}
@@ -459,14 +684,30 @@ export default function SmartBuyHome() {
                   <span>⌾</span>
 
                   <select defaultValue="College">
-                    <option>College</option>
-                    <option>Office</option>
-                    <option>Gym</option>
-                    <option>Travel</option>
-                    <option>Party</option>
+                    <option>
+                      College
+                    </option>
+
+                    <option>
+                      Office
+                    </option>
+
+                    <option>
+                      Gym
+                    </option>
+
+                    <option>
+                      Travel
+                    </option>
+
+                    <option>
+                      Party
+                    </option>
                   </select>
 
-                  <small>Purpose</small>
+                  <small>
+                    Purpose
+                  </small>
                 </label>
 
                 {/* Style */}
@@ -476,24 +717,45 @@ export default function SmartBuyHome() {
                   <select
                     value={style}
                     onChange={(event) =>
-                      setStyle(event.target.value)
+                      setStyle(
+                        event.target.value
+                      )
                     }
                   >
-                    <option>Casual</option>
-                    <option>Street</option>
-                    <option>Minimal</option>
-                    <option>Sporty</option>
-                    <option>Premium</option>
+                    <option>
+                      Casual
+                    </option>
+
+                    <option>
+                      Street
+                    </option>
+
+                    <option>
+                      Minimal
+                    </option>
+
+                    <option>
+                      Sporty
+                    </option>
+
+                    <option>
+                      Premium
+                    </option>
                   </select>
 
-                  <small>Style</small>
+                  <small>
+                    Style
+                  </small>
                 </label>
+
               </div>
 
               <button
                 className="generate"
                 type="button"
-                onClick={generateCollection}
+                onClick={
+                  generateCollection
+                }
               >
                 <Sparkles size={16} />
 
@@ -504,20 +766,21 @@ export default function SmartBuyHome() {
                 <ArrowRight size={15} />
               </button>
 
-              {stage > 0 && stage < 4 && (
-                <div className="ai-progress">
-                  <span className="spinner" />
+              {stage > 0 &&
+                stage < 4 && (
+                  <div className="ai-progress">
+                    <span className="spinner" />
 
-                  {
-                    [
-                      "",
-                      "Analyzing your preferences…",
-                      "Finding the best products…",
-                      "Optimizing your budget…",
-                    ][stage]
-                  }
-                </div>
-              )}
+                    {
+                      [
+                        "",
+                        "Analyzing your preferences…",
+                        "Finding the best products…",
+                        "Optimizing your budget…",
+                      ][stage]
+                    }
+                  </div>
+                )}
 
               <div className="suggestions">
                 {[
@@ -528,47 +791,66 @@ export default function SmartBuyHome() {
                   <button
                     key={item}
                     type="button"
-                    onClick={() => setQuery(item)}
+                    onClick={() =>
+                      setQuery(item)
+                    }
                   >
                     {item}
                   </button>
                 ))}
               </div>
+
             </aside>
           )}
+
         </div>
 
-        {/* Categories */}
-        <div className="category-row">
-          {categories.map(([name, Icon]) => (
-            <button key={name} type="button">
-              <span>
-                <Icon size={18} />
-              </span>
+        {/* CATEGORY ROW */}
 
-              {name}
-            </button>
-          ))}
+        <div className="category-row">
+          {categories.map(
+            ([name, Icon]) => (
+              <button
+                key={name}
+                type="button"
+              >
+                <span>
+                  <Icon size={18} />
+                </span>
+
+                {name}
+              </button>
+            )
+          )}
         </div>
       </section>
 
-      {/* ================= CAMPAIGNS ================= */}
+      {/* =================================================
+          CAMPAIGNS
+      ================================================= */}
+
       <section
         id="categories"
         className="campaigns"
       >
         <div className="campaign-grid">
+
           <div className="campaign big">
-            <span>NEW COLLECTION</span>
+            <span>
+              NEW COLLECTION
+            </span>
 
             <h2>
               Street Style
               <br />
-              <b>Reimagined</b>
+              <b>
+                Reimagined
+              </b>
             </h2>
 
             <p>
-              Trendy. Comfortable. Unstoppable.
+              Trendy. Comfortable.
+              Unstoppable.
             </p>
 
             <Link href="/products">
@@ -578,12 +860,17 @@ export default function SmartBuyHome() {
           </div>
 
           <div className="campaign look">
-            <span>SMARTBUY PICKS</span>
+            <span>
+              SMARTBUY PICKS
+            </span>
 
-            <h2>Complete Your Look</h2>
+            <h2>
+              Complete Your Look
+            </h2>
 
             <p>
-              AI curated outfits just for you.
+              AI curated outfits just
+              for you.
             </p>
 
             <Link href="/products">
@@ -608,7 +895,9 @@ export default function SmartBuyHome() {
             id="deals"
             className="campaign story"
           >
-            <span>YOUR STYLE</span>
+            <span>
+              YOUR STYLE
+            </span>
 
             <h2>
               Your Style
@@ -617,7 +906,8 @@ export default function SmartBuyHome() {
             </h2>
 
             <p>
-              Premium fashion for every vibe.
+              Premium fashion for
+              every vibe.
             </p>
 
             <Link href="/products">
@@ -625,132 +915,204 @@ export default function SmartBuyHome() {
               <ArrowRight size={14} />
             </Link>
           </div>
+
         </div>
       </section>
 
-      {/* ================= PRODUCTS ================= */}
+      {/* =================================================
+          PRODUCTS
+      ================================================= */}
+
       <section
         id="products"
         className="products-section"
       >
+
         <div className="section-head">
+
           <div>
-            <span>MOST LOVED PRODUCTS</span>
-            <h2>Trending Now</h2>
+            <span>
+              MOST LOVED PRODUCTS
+            </span>
+
+            <h2>
+              Trending Now
+            </h2>
           </div>
 
           <Link href="/products">
             View All
             <ArrowRight size={15} />
           </Link>
+
         </div>
 
         <div
           id="trending"
           className="product-grid"
         >
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              liked={likes.includes(product.id)}
-              onLike={() =>
-                toggleLike(product.id)
-              }
-              onAdd={() =>
-                addToCart(product.id)
-              }
-            />
-          ))}
+          {filteredProducts.map(
+            (product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                liked={likes.includes(
+                  product.id
+                )}
+                onLike={() =>
+                  toggleLike(
+                    product.id
+                  )
+                }
+                onAdd={() =>
+                  addToCart(
+                    product.id
+                  )
+                }
+              />
+            )
+          )}
         </div>
 
-        {/* Recommended */}
+        {/* RECOMMENDED */}
+
         <div className="section-head recommended">
+
           <div>
-            <span>BASED ON YOUR TRENDS</span>
-            <h2>Recommended For You</h2>
+            <span>
+              BASED ON YOUR TRENDS
+            </span>
+
+            <h2>
+              Recommended For You
+            </h2>
           </div>
 
-          <small>Curated by SmartBuy AI</small>
+          <small>
+            Curated by SmartBuy AI
+          </small>
+
         </div>
 
         <div className="mini-strip">
-          {products.slice(2).map((product) => (
-            <div
-              className="mini-product"
-              key={product.id}
-            >
-              <div className="mini-img">
-                <img
-                  src={product.img}
-                  alt={product.name}
-                />
 
-                <b>{product.badge}</b>
+          {products
+            .slice(2)
+            .map((product) => (
+              <div
+                className="mini-product"
+                key={product.id}
+              >
+                <div className="mini-img">
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    toggleLike(product.id)
-                  }
-                >
-                  {likes.includes(product.id) ? (
-                    <Heart
-                      size={14}
-                      fill="currentColor"
-                    />
-                  ) : (
-                    <Heart size={14} />
-                  )}
-                </button>
+                  <img
+                    src={product.img}
+                    alt={
+                      product.name
+                    }
+                  />
+
+                  <b>
+                    {product.badge}
+                  </b>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleLike(
+                        product.id
+                      )
+                    }
+                  >
+                    {likes.includes(
+                      product.id
+                    ) ? (
+                      <Heart
+                        size={14}
+                        fill="currentColor"
+                      />
+                    ) : (
+                      <Heart size={14} />
+                    )}
+                  </button>
+
+                </div>
+
+                <strong>
+                  {product.name}
+                </strong>
+
+                <div>
+                  <b>
+                    ₹
+                    {product.price.toLocaleString(
+                      "en-IN"
+                    )}
+                  </b>
+
+                  <span>
+                    ★{" "}
+                    {product.rating}
+                  </span>
+                </div>
+
               </div>
+            ))}
 
-              <strong>{product.name}</strong>
-
-              <div>
-                <b>
-                  ₹
-                  {product.price.toLocaleString(
-                    "en-IN"
-                  )}
-                </b>
-
-                <span>
-                  ★ {product.rating}
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
-      {/* ================= FOOTER ================= */}
+      {/* =================================================
+          FOOTER
+      ================================================= */}
+
       <footer>
         <div className="footer-inner">
+
           <div className="brand">
-            <span className="brand-mark">S</span>
-            <b>SmartBuy</b>
+            <span className="brand-mark">
+              S
+            </span>
+
+            <b>
+              SmartBuy
+            </b>
           </div>
 
           <p>
-            AI-powered shopping • secure payments •
-            premium experience
+            AI-powered shopping • secure
+            payments • premium experience
           </p>
 
-          <span>© 2026 SmartBuy</span>
+          <span>
+            © 2026 SmartBuy
+          </span>
+
         </div>
       </footer>
 
-      {/* ================= SEARCH MODAL ================= */}
+      {/* =================================================
+          SEARCH MODAL
+      ================================================= */}
+
       <AnimatePresence>
         {search && (
           <motion.div
             className="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSearch(false)}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            onClick={() =>
+              setSearch(false)
+            }
           >
+
             <motion.div
               className="search-modal"
               initial={{
@@ -769,14 +1131,18 @@ export default function SmartBuyHome() {
                 event.stopPropagation()
               }
             >
+
               <div className="search-input">
+
                 <Search size={20} />
 
                 <input
                   autoFocus
                   value={query}
                   onChange={(event) =>
-                    setQuery(event.target.value)
+                    setQuery(
+                      event.target.value
+                    )
                   }
                   placeholder="Search products, brands, categories…"
                 />
@@ -789,12 +1155,19 @@ export default function SmartBuyHome() {
                 >
                   <X size={18} />
                 </button>
+
               </div>
 
               <div className="search-body">
+
                 <div className="search-meta">
-                  <b>Popular Searches</b>
-                  <span>ESC to close</span>
+                  <b>
+                    Popular Searches
+                  </b>
+
+                  <span>
+                    ESC to close
+                  </span>
                 </div>
 
                 <div className="chips">
@@ -820,28 +1193,42 @@ export default function SmartBuyHome() {
 
                 {query && (
                   <div className="results">
+
                     {filteredProducts
                       .slice(0, 5)
                       .map((product) => (
                         <Link
-                          key={product.id}
+                          key={
+                            product.id
+                          }
                           href={`/products/${product.id}`}
                           onClick={() =>
-                            setSearch(false)
+                            setSearch(
+                              false
+                            )
                           }
                         >
                           <img
-                            src={product.img}
-                            alt={product.name}
+                            src={
+                              product.img
+                            }
+                            alt={
+                              product.name
+                            }
                           />
 
                           <span>
                             <b>
-                              {product.name}
+                              {
+                                product.name
+                              }
                             </b>
 
                             <small>
-                              {product.cat} · ₹
+                              {
+                                product.cat
+                              }{" "}
+                              · ₹
                               {product.price.toLocaleString(
                                 "en-IN"
                               )}
@@ -853,20 +1240,25 @@ export default function SmartBuyHome() {
                           />
                         </Link>
                       ))}
+
                   </div>
                 )}
+
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating AI button */}
+      {/* FLOATING AI */}
+
       {!ai && (
         <button
           className="floating-ai"
           type="button"
-          onClick={() => setAi(true)}
+          onClick={() =>
+            setAi(true)
+          }
         >
           <Sparkles size={17} />
           SmartBuy AI
@@ -877,7 +1269,7 @@ export default function SmartBuyHome() {
 }
 
 /* =====================================================
-   FLOATING PRODUCT CARD
+   FLOAT CARD
 ===================================================== */
 
 function FloatCard({
@@ -899,10 +1291,14 @@ function FloatCard({
     <motion.div
       className={`float-card ${cls}`}
       animate={{
-        y: button ? [0, 8, 0] : [0, -8, 0],
+        y: button
+          ? [0, 8, 0]
+          : [0, -8, 0],
       }}
       transition={{
-        duration: button ? 4.7 : 4,
+        duration: button
+          ? 4.7
+          : 4,
         repeat: Infinity,
       }}
     >
@@ -942,17 +1338,27 @@ function ProductCard({
   onLike: () => void;
   onAdd: () => void;
 }) {
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] =
+    useState(false);
 
   return (
     <motion.article
       className="p-card"
-      onHoverStart={() => setHover(true)}
-      onHoverEnd={() => setHover(false)}
-      whileHover={{ y: -7 }}
+      onHoverStart={() =>
+        setHover(true)
+      }
+      onHoverEnd={() =>
+        setHover(false)
+      }
+      whileHover={{
+        y: -7,
+      }}
     >
       <div className="p-img">
-        <span>{product.badge}</span>
+
+        <span>
+          {product.badge}
+        </span>
 
         <button
           type="button"
@@ -973,8 +1379,12 @@ function ProductCard({
           src={product.img}
           alt={product.name}
           animate={{
-            scale: hover ? 1.055 : 1,
-            rotate: hover ? -1 : 0,
+            scale: hover
+              ? 1.055
+              : 1,
+            rotate: hover
+              ? -1
+              : 0,
           }}
           transition={{
             duration: 0.3,
@@ -1007,18 +1417,25 @@ function ProductCard({
             </Link>
           </motion.div>
         )}
+
       </div>
 
       <div className="p-info">
+
         <div className="p-title">
-          <b>{product.name}</b>
+
+          <b>
+            {product.name}
+          </b>
 
           <span>
             ★ {product.rating}
           </span>
+
         </div>
 
         <div className="price">
+
           <strong>
             ₹
             {product.price.toLocaleString(
@@ -1032,14 +1449,19 @@ function ProductCard({
               "en-IN"
             )}
           </del>
+
         </div>
 
         <div className="p-actions">
+
           <button
             type="button"
             onClick={onAdd}
           >
-            <ShoppingBag size={15} />
+            <ShoppingBag
+              size={15}
+            />
+
             Add to Cart
           </button>
 
@@ -1057,6 +1479,7 @@ function ProductCard({
               <Heart size={16} />
             )}
           </button>
+
         </div>
       </div>
     </motion.article>
